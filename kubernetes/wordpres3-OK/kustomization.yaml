@@ -1,0 +1,9 @@
+resources:
+    - pv-mysql-volume.yaml
+    - pv-www-volume.yaml
+    - mysql-deployment.yaml
+    - wordpress-deployment.yaml
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=C0rr3ct!0n123

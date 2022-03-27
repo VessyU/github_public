@@ -1,0 +1,47 @@
+version: '2'
+# OK
+# WP + MariaDB + phpmyadmin
+services:
+  wordpress:
+    depends_on:
+      - mariadb
+    image: wordpress:latest
+    volumes:
+      - wordpress_files:/html
+    ports:
+      - "8000:80"
+      #- 443:443
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_USER: svc-admin
+      WORDPRESS_DB_PASSWORD: C0rr3ct!0n123
+      WORDPRESS_DB_NAME: wpsite
+
+  mariadb:
+    image: 'bitnami/mariadb:10.3'
+    environment:
+      MARIADB_ROOT_PASSWORD: C0rr3ct!0n123
+      MARIADB_DATABASE: wpsite
+      MARIADB_USER: svc-admin
+      MARIADB_PASSWORD: C0rr3ct!0n123
+    volumes:
+      - 'mariadb_data:/bitnami'
+    #  - ./database:/var/lib/mysql
+
+  phpmyadmin:
+    image: 'bitnami/phpmyadmin:5'
+    ports:
+      - '8080:80'
+     # - '443:443'
+    depends_on:
+      - mariadb
+    volumes:
+      - 'phpmyadmin_data:/bitnami'
+volumes:
+  mariadb_data:
+    driver: local
+  phpmyadmin_data:
+    driver: local
+  wordpress_files:
+    driver: local

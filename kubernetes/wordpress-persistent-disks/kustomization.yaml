@@ -1,0 +1,11 @@
+resources:
+    - mysql.yaml
+    - mysql-service.yaml
+    - mysql-volumeclaim.yaml
+    - wordpress.yaml
+    - wordpress-service.yaml
+    - wordpress-volumeclaim.yaml
+secretGenerator:
+- name: mysql-pass
+  literals:
+  - password=C0rr3ct!0n123

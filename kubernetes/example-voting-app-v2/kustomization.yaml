@@ -1,0 +1,10 @@
+resources:
+    - postgres-deployment.yaml
+    - postgres-service.yaml
+    - redis-deployment.yaml
+    - redis-service.yaml
+    - result-app-deployment.yaml
+    - result-app-service.yaml
+    - voting-app-deployment.yaml
+    - voting-app-service.yaml
+    - worker-app-deployment.yaml

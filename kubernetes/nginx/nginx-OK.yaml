@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-web2
+  labels:
+    app: nginx
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+    nodePort: 32082
+  selector:
+    app: nginx
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-web2-volume
+  labels:
+    app: nginx
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/nginx"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-web2-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-web2
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: nginx-web2-storage
+          persistentVolumeClaim:
+            claimName: nginx-web2-claim
+      containers:
+        - name: nginx-web2
+          image: nginx
+          ports:
+            - containerPort: 80
+              name: nginx-web2
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: nginx-web2-storage

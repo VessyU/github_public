@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-apache
+  labels:
+    app: apache-app
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+    nodePort: 32083
+  selector:
+    app: apache-app
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ubuntu-apache-volume
+  labels:
+    app: apache-app
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/nginx2"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-apache-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu-apache
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: apache-app
+  replicas: 2
+  template: # create pods using pod definition in this template
+    metadata:
+      labels:
+        app: apache-app
+    spec:
+      volumes:
+        - name: ubuntu-apache-storage
+          persistentVolumeClaim:
+            claimName: ubuntu-apache-claim
+      containers:
+        - name: ubuntu-apache
+          image: ubuntu/apache2
+          ports:
+            - containerPort: 80
+              name: ubuntu-apache
+          volumeMounts:
+            - mountPath: "/var/www/html"
+              name: ubuntu-apache-storage

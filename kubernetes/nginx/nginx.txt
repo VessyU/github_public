@@ -1,0 +1,31 @@
+image: ubuntu/nginx
+mountPath: "/var/www/html"
+
+image: nginx:latest
+mountPath: "/usr/share/nginx/html"
+
+
+helm install nginx-web1 \
+  --set imagePullPolicy=Always \
+  --set service.nodePorts.http=32081 \
+bitnami/nginx
+
+helm install nginx-web1-helm \
+  --set replicaCount=2 \
+  --set imagePullPolicy=Always \
+  --set service.nodePorts.http=32081 \
+  --set cloneStaticSiteFromGit.enabled=true \
+  --set cloneStaticSiteFromGit.repository=https://github.com/VenelinU/nginx.git \
+  --set cloneStaticSiteFromGit.branch=main \
+  --set cloneStaticSiteFromGit.interval=60 \
+bitnami/nginx
+
+helm install nginx-web1-helm `
+  --set replicaCount=2 `
+  --set imagePullPolicy=Always `
+  --set service.nodePorts.http=32081 `
+  --set cloneStaticSiteFromGit.enabled=true `
+  --set cloneStaticSiteFromGit.repository=https://github.com/VenelinU/nginx.git `
+  --set cloneStaticSiteFromGit.branch=main `
+  --set cloneStaticSiteFromGit.interval=60 `
+bitnami/nginx

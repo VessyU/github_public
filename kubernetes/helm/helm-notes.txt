@@ -1,0 +1,48 @@
+https://artifacthub.io/packages/helm/bitnami/wordpress
+helm install wordpress --set wordpressUsername=svc-admin --set wordpressPassword=Pa55w0rd --set mariadb.auth.rootPassword=Pa55w0rd bitnami/wordpress
+
+helm install wordpress-helm `
+--set wordpressUsername=svc-admin `
+--set wordpressPassword=Pa55w0rd `
+--set mariadb.auth.rootPassword=Pa55w0rd `
+--set service.ports.http=32080 `
+bitnami/wordpress
+
+helm install wordpress-helm \
+--set wordpressUsername=svc-admin \
+--set wordpressPassword=Pa55w0rd \
+--set mariadb.auth.rootPassword=Pa55w0rd \
+--set service.nodePorts.http=32080 \
+bitnami/wordpress
+
+helm install nginx-web1 \
+  --set imagePullPolicy=Always \
+  --set service.nodePorts.http=32081 \
+bitnami/nginx
+
+helm install nginx-web1 \
+  --set replicaCount=2 \
+  --set imagePullPolicy=Always \
+  --set service.nodePorts.http=32081 \
+  --set cloneStaticSiteFromGit.enabled=true \
+  --set cloneStaticSiteFromGit.repository=https://github.com/VenelinU/nginx.git \
+  --set cloneStaticSiteFromGit.branch=main \
+  --set cloneStaticSiteFromGit.interval=60 \
+bitnami/nginx
+
+helm install jenkins \
+  --set jenkinsUser=svc-admin \
+  --set jenkinsPassword=Pa55w0rd \
+  --set service.nodePorts.http=30360 \
+  bitnami-azure/jenkins
+
+helm install joomla \
+--set joomlaUsername=svc-admin \
+--set joomlaPassword=Pa55w0rd \
+--set service.nodePorts.http=30363 \
+bitnami/joomla
+
+helm delete wordpress-helm
+
+kubectl get svc,po,deploy
+kubectl describe deployment
